@@ -1,0 +1,88 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<Layout title="Blog — r0skie" description="Tulisan-tulisan r0skie tentang teknologi dan hal lainnya">
+  <style>
+    h1 {
+      font-size: 2rem;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: #888;
+      margin-bottom: 3rem;
+      font-size: 0.95rem;
+    }
+
+    .post-list { display: flex; flex-direction: column; }
+
+    .post-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 1.1rem 0;
+      border-bottom: 1px solid #1e1e1e;
+      text-decoration: none;
+      color: inherit;
+      gap: 1rem;
+      transition: color 0.2s;
+    }
+
+    .post-item:hover .post-title { color: #7c6af7; }
+
+    .post-left { display: flex; flex-direction: column; gap: 0.2rem; }
+
+    .post-title { font-size: 1rem; font-weight: 500; }
+
+    .post-desc { color: #888; font-size: 0.85rem; }
+
+    .post-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: #888;
+      white-space: nowrap;
+    }
+
+    .empty {
+      color: #888;
+      font-size: 0.95rem;
+      padding: 2rem 0;
+    }
+
+    .empty code {
+      font-family: 'JetBrains Mono', monospace;
+      background: #1e1e1e;
+      padding: 0.1rem 0.4rem;
+      border-radius: 3px;
+      font-size: 0.85rem;
+    }
+  </style>
+
+  <h1>Blog</h1>
+  <p class="subtitle">Catatan, tutorial, dan eksplorasi.</p>
+
+  <div class="post-list">
+    {posts.length === 0 ? (
+      <div class="empty">
+        <p>Belum ada tulisan nih. Tambahkan file <code>.md</code> di folder <code>src/content/blog/</code> untuk mulai!</p>
+      </div>
+    ) : (
+      posts.map(post => (
+        <a href={`/blog/${post.slug}`} class="post-item">
+          <div class="post-left">
+            <span class="post-title">{post.data.title}</span>
+            {post.data.description && <span class="post-desc">{post.data.description}</span>}
+          </div>
+          <span class="post-date">{post.data.date.toLocaleDateString('id-ID', { year:'numeric', month:'short', day:'numeric' })}</span>
+        </a>
+      ))
+    )}
+  </div>
+</Layout>
